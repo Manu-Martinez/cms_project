@@ -1,5 +1,6 @@
 import os
+from flask import Flask 
 
-SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
-SECRET_KEY = os.getenv('SECRET_KEY')
-# other config variables...
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
