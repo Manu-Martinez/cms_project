@@ -1,6 +1,7 @@
 from flask import render_template, redirect, url_for, request
 from . import db, create_app
-from .models import Post
+from app.models import Post
+
 
 app = create_app()
 
