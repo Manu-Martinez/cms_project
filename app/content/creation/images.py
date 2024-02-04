@@ -20,4 +20,4 @@ def create_photo():
 		db.session.add(new_photo)
 		db.session.commit()
 		return redirect(url_for('home'))
-	return render_template('create_post.html')
+	return render_template('create_photo.html')

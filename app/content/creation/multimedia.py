@@ -26,4 +26,4 @@ def create_media():
 		db.session.add(new_media)
 		db.session.commit()
 		return redirect(url_for('home'))
-	return render_template('create_post.html')
+	return render_template('create_media.html')

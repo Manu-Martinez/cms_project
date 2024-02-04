@@ -20,4 +20,4 @@ def create_video():
 		db.session.add(new_video)
 		db.session.commit()
 		return redirect(url_for('home'))
-	return render_template('create_post.html')
+	return render_template('create_video.html')
