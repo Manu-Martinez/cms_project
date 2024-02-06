@@ -17,7 +17,7 @@ def user(username):
 	photos = user.photos.all()
 	return render_template('user.html', user=user, posts=posts, links=links, videos=videos, photos=photos)
 
-@app.route('/user/<username>', methods=['GET'])
+@app.route('/get-user/<username>', methods=['GET'])
 def get_user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user)
