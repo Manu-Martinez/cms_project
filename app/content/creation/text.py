@@ -5,6 +5,13 @@ from app.static import Post
 
 app = create_app()
 
+@app.route('/')
+def home():
+    # Fetch posts from the database
+    posts = Post.query.all()
+    # Render the 'home.html' template, passing the posts to the template
+    return render_template('home.html', posts=posts)
+
 @app.route('/post/create', methods=['GET', 'POST'])
 def create_post():
     if request.method == 'POST':

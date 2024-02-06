@@ -10,6 +10,13 @@ images = UploadSet('images', IMAGES)
 
 configure_uploads(app, images)
 
+@app.route('/')
+def home():
+    # Fetch photos from the database
+    photos = Photo.query.all()
+    # Render the 'home.html' template, passing the photos to the template
+    return render_template('home.html', photos=photos)
+
 @app.route('/post/create', methods=['GET', 'POST'])
 def create_photo():
 	if request.method == 'POST':

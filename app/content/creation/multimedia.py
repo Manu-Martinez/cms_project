@@ -14,6 +14,13 @@ videos = UploadSet('videos', ('mp4', 'avi', 'mov', 'flv', 'wmv'))
 
 configure_uploads(app, (images, videos, multimedia))
 
+@app.route('/')
+def home():
+    # Fetch media from the database
+    media = Post.query.all()
+    # Render the 'home.html' template, passing the media to the template
+    return render_template('home.html', media=media)
+
 @app.route('/post/create', methods=['GET', 'POST'])
 def create_media():
 	if request.method == 'POST':
