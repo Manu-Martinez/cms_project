@@ -9,6 +9,10 @@ def home():
 	return render_template('home.html')
 
 
+@app.route('/user')
+def no_user():
+    return render_template('empty_user.html')
+
 @app.route('/create-user', methods=['GET', 'POST'])
 def create_user():
     if request.method == 'POST':
@@ -39,6 +43,10 @@ def get_user(username):
     return render_template('user.html', user=user)
 
 
+
+@app.route('/post')
+def no_post():
+    return render_template('empty_post.html')
 
 @app.route('/create-post', methods=['GET', 'POST'])
 def create_post():
