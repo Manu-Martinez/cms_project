@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Post</title>
+</head>
+<body>
+    <form method="POST">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value="{{ post.title }}"><br>
+        <label for="content">Content:</label><br>
+        <textarea id="content" name="content">{{ post.content }}</textarea><br>
+        <input type="submit" value="Update">
+    </form>
+</body>
+</html>

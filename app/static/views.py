@@ -1,12 +1,28 @@
 from flask import render_template, redirect, url_for, request
-from . import create_app, db
+from app import db
 from .models import User, Post
-
-app = create_app()
+from flask import current_app as app
+from flask_login import current_user
 
 @app.route('/')
 def home():
 	return render_template('home.html')
+
+
+@app.route('/create-user', methods=['GET', 'POST'])
+def create_user():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        # Add more fields as necessary
+
+        user = User(username=username, email=email)
+        db.session.add(user)
+        db.session.commit()
+
+        return redirect(url_for('user', username=username))
+
+    return render_template('create_user.html')
 
 @app.route('/user/<username>')
 def user(username):
@@ -21,6 +37,24 @@ def user(username):
 def get_user(username):
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user)
+
+
+
+@app.route('/create-post', methods=['GET', 'POST'])
+def create_post():
+	if request.method == 'POST':
+		title = request.form['title']
+		content = request.form['content']
+		# Assuming the user is logged in and you have access to current_user
+		user_id = current_user.id
+
+		post = Post(title=title, content=content, user_id=user_id)
+		db.session.add(post)
+		db.session.commit()
+
+		return redirect(url_for('get_post', post_id=post.id))
+
+	return render_template('create_post.html')
 
 @app.route('/post/<int:post_id>', methods=['GET'])
 def get_post(post_id):
