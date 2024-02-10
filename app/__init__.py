@@ -1,21 +1,27 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import os 
+from dotenv import load_dotenv
 
 db = SQLAlchemy()
+migrate = Migrate()
 
+load_dotenv()
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object('app.static.config')
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/content_management_db'
+    app.config['SECRET_KEY'] = SECRET_KEY
+    app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     with app.app_context():
-        from . import views
-        db.create_all()
+        from .static import views   # noqa: F401
+        db.create_all()  # Create the database tables
 
     return app
-
-migrate = Migrate(create_app, db)
