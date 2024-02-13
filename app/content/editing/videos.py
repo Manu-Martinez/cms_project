@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, request
 from flask_uploads import UploadSet, configure_uploads, AUDIO, DATA
 from . import db, create_app
-from app.models import Post
+from app.static.models import Post
 from flask_uploads import videos
 
 

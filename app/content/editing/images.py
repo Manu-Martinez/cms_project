@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, request
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 from . import db, create_app
-from app.static import Update
+from app.static.models import Post
 
 
 app = create_app()
