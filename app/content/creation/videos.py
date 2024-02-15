@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, request
-from flask_uploads import UploadSet, configure_uploads, AUDIO, DATA
+from flask_uploads import UploadSet, configure_uploads
 from . import db, create_app
 from app.static import Video
 
