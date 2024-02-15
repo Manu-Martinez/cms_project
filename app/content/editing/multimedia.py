@@ -1,29 +1,32 @@
-from flask import render_template, redirect, url_for, request
-from flask_uploads import UploadSet, configure_uploads, IMAGES, AUDIO, DATA
-from . import db, create_app
-from app.static.models import Post
-from . import images, videos
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_required, current_user
+from app.static.models import Video, Photo, Link
+from app import db
+from . import multimedia as multimedia_uploadset
 
+multimedia = Blueprint('multimedia', __name__)
 
-app = create_app()
+@multimedia.route('/edit_multimedia/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_multimedia(id):
+    # Fetch the multimedia from the database
+    multimedia = Link.query.get_or_404(id)
 
+    # Ensure the current user is the owner of the multimedia
+    if multimedia.owner_id != current_user.id:
+        flash('You do not have permission to edit this multimedia.')
+        return redirect(url_for('main.home'))
 
-multimedia = UploadSet('multimedia', AUDIO + DATA)
-images = UploadSet('images', IMAGES)
-videos = UploadSet('videos', ('mp4', 'avi', 'mov', 'flv', 'wmv'))
+    if request.method == 'POST':
+        # Get the new multimedia file from the form data
+        new_multimedia_file = request.files.get('multimedia')
 
-configure_uploads(app, (images, videos, multimedia))
+        if new_multimedia_file:
+            # Save the new multimedia and update the multimedia record
+            new_multimedia_filename = multimedia_uploadset.save(new_multimedia_file)
+            multimedia.multimedia = new_multimedia_filename
+            db.session.commit()
+            flash('Multimedia updated successfully.')
+            return redirect(url_for('multimedia.display_multimedia', id=multimedia.id))
 
-@app.route('/post/create', methods=['GET', 'POST'])
-def create_post():
-	if request.method == 'POST':
-		title = request.form['title']
-		content = request.form['content']
-		image = images.save(request.files['image'])
-		video = videos.save(request.files['video'])
-		multimedia_file = multimedia.save(request.files['multimedia'])
-		new_post = Post(title=title, content=content, multimedia=multimedia_file, image=image, video=video) 
-		db.session.add(new_post)
-		db.session.commit()
-		return redirect(url_for('home'))
-	return render_template('create_post.html')
+    return render_template('edit_multimedia.html', multimedia=multimedia)

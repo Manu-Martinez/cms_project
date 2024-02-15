@@ -1,24 +1,32 @@
-from flask import render_template, redirect, url_for, request
-from flask_uploads import UploadSet, configure_uploads, AUDIO, DATA
-from . import db, create_app
-from app.static.models import Post
-from flask_uploads import videos
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_required, current_user
+from app.static.models import Video
+from app import db
+from . import videos as videos_uploadset
 
+videos = Blueprint('videos', __name__)
 
-app = create_app()
+@videos.route('/edit_video/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_video(id):
+    # Fetch the video from the database
+    video = Video.query.get_or_404(id)
 
-videos = UploadSet('videos', ('mp4', 'avi', 'mov', 'flv', 'wmv'))
+    # Ensure the current user is the owner of the video
+    if video.owner_id != current_user.id:
+        flash('You do not have permission to edit this video.')
+        return redirect(url_for('main.home'))
 
-configure_uploads(app, videos)
+    if request.method == 'POST':
+        # Get the new video file from the form data
+        new_video_file = request.files.get('video')
 
-@app.route('/post/create', methods=['GET', 'POST'])
-def create_post():
-	if request.method == 'POST':
-		title = request.form['title']
-		content = request.form['content']
-		video = videos.save(request.files['video'])
-		new_post = Post(title=title, content=content, video=video) 
-		db.session.add(new_post)
-		db.session.commit()
-		return redirect(url_for('home'))
-	return render_template('create_post.html')
+        if new_video_file:
+            # Save the new video and update the video record
+            new_video_filename = videos_uploadset.save(new_video_file)
+            video.video = new_video_filename
+            db.session.commit()
+            flash('Video updated successfully.')
+            return redirect(url_for('videos.display_video', id=video.id))
+
+    return render_template('edit_video.html', video=video)
