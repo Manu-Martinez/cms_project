@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Home Page</title>
+	<title>Home Page</title>
 </head>
+
 <body>
-    <h1>Welcome to the Home Page</h1>
-    <p>This is a simple home page for a Flask application.</p>
+	<h1>Welcome to the Home Page</h1>
+	<p>This is a simple home page for a Flask application.</p>
+
+	{% for post in posts.items %}
+	<h2>{{ post.title }}</h2>
+	<p>By {{ post.author.name }} on {{ post.publication_date.strftime('%Y-%m-%d') }}</p>
+	<p>{{ post.content }}</p>
+	{% endfor %}
+
+	<!-- Pagination links -->
+	{% if posts.has_prev %}
+	<a href="{{ url_for('main.home', page=posts.prev_num) }}">Previous</a>
+	{% endif %}
+	{% if posts.has_next %}
+	<a href="{{ url_for('main.home', page=posts.next_num) }}">Next</a>
+	{% endif %}
 </body>
+
 </html>
