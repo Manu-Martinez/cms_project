@@ -30,3 +30,33 @@ def edit_post(id):
             return redirect(url_for('posts.display_post', id=post.id))
 
     return render_template('edit_post.html', post=post)
+
+from app.versionControl.revisions import Revision
+
+@post.route('/edit_post/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    # Fetch the post from the database
+    post = Post.query.get(id)
+    # If the form is submitted
+    if request.method == 'POST':
+        # Create a new revision
+        if post.content_type == 'text':
+            revision = Revision(post_id=post.id, content=post.content)
+        elif post.content_type == 'image':
+            revision = Revision(post_id=post.id, image_path=post.image_path)
+        elif post.content_type == 'video':
+            revision = Revision(post_id=post.id, video_url=post.video_url)
+        elif post.content_type == 'link':
+            revision = Revision(post_id=post.id, link_url=post.link_url)
+        db.session.add(revision)
+        # Update the post
+        if post.content_type == 'text':
+            post.content = request.form['content']
+        elif post.content_type == 'image':
+            post.image_path = request.form['image_path']
+        elif post.content_type == 'video':
+            post.video_url = request.form['video_url']
+        elif post.content_type == 'link':
+            post.link_url = request.form['link_url']
+        db.session.commit()
