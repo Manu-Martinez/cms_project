@@ -23,6 +23,7 @@ class Post(db.Model):
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    published = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
@@ -56,3 +57,14 @@ class Photo(db.Model):
 
     def __repr__(self):
         return '<Photo {}>'.format(self.url)
+    
+class Draft(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50))
+    content = db.Column(db.String(500))
+    published = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<Draft {}>'.format(self.content)
